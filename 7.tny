@@ -23,15 +23,15 @@ void main(void)
 {
 
    /* teste de diferentes tipos de vari�veis, incluindo vetor */
-   /*int input;*/ /* erro semantico - nome duplicado com de fun��o */
+   /*int input;*/
    int x;
    int y;
    int u;
    int v[10];
 
    /* chamadas de fun��es */
-   input = x;
-   x = input;
+   input = x; /* erro semantico - nao declarado */
+   x = input; /* erro semantico - nao declarado */
    y = input();
    output(gdc(x,y));
 

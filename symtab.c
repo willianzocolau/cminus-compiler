@@ -85,7 +85,7 @@ BucketList st_bucket( char * name )
   return NULL;
 }
 
-BucketList st_bucket_kind( char * name , DeclKind declKind )
+BucketList st_bucket_kind( char * name, DeclKind declKind )
 { int h = hash(name);
   Scope sc = sc_top();
   while(sc) {
@@ -131,6 +131,12 @@ void st_insert( char * name, int lineno, int loc, TreeNode * treeNode )
  */
 int st_lookup ( char * name )
 { BucketList l = st_bucket(name);
+  if (l != NULL) return l->memloc;
+  return -1;
+}
+
+int st_lookup_kind ( char * name, DeclKind declKind )
+{ BucketList l = st_bucket_kind(name, declKind);
   if (l != NULL) return l->memloc;
   return -1;
 }
