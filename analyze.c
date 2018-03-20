@@ -396,11 +396,6 @@ static void checkNode(TreeNode * t)
             arg = t->child[0];
             param = funcDecl->child[1];
 
-            if (funcDecl->kind.decl != FuncK)
-            { typeError(t,"expected function symbol");
-              break;
-            }
-
             while (arg != NULL)
             { if (param == NULL)
               /* the number of arguments does not match to
