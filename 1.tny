@@ -1,10 +1,10 @@
-int a(int x)
+int input(void)
 {
   
 }
 
-int main (void)
+int main(void)
 {
   int x;
-  a(1);
+  x = input();
 }

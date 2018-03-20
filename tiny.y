@@ -113,11 +113,7 @@ fun_decl	: tipo_espec salva_nome
 			;
 			
 params		: param_lista { $$ = $1; }
-			| VOID
-				{
-					$$ = newTypeNode(TypeNameK);
-					$$->attr.type = VOID;
-                }
+			| VOID { $$ = NULL; }
 			;
 			
 param_lista : param_lista COMMA param
