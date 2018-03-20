@@ -222,7 +222,7 @@ static void afterInsertNode( TreeNode * t )
 void buildSymtab(TreeNode * syntaxTree)
 { globalScope = sc_create(NULL);
   sc_push(globalScope);
-  insertIOFunc();
+  //insertIOFunc();
   traverse(syntaxTree,insertNode,afterInsertNode);
   sc_pop();
   if (TraceAnalyze)

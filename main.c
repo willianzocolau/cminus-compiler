@@ -65,9 +65,9 @@ int main( int argc, char * argv[] )
 #if NO_PARSE
   while (getToken()!=ENDFILE);
 #else
-  syntaxTree = parse();
+  syntaxTree = parse();  
   if (TraceParse) {
-    fprintf(listing,"\nSyntax tree:\n");
+    fprintf(listing,"\nSyntax tree:\n");    
     printTree(syntaxTree);
   }
 #if !NO_ANALYZE

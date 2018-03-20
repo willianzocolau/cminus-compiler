@@ -199,7 +199,7 @@ void printTree( TreeNode * tree )
           fprintf(listing,"If\n");
           break;
         case IterK:
-          fprintf(listing,"While\n");
+          fprintf(listing,"Repeat\n");
           break;
         case RetK:
           fprintf(listing,"Return\n");
