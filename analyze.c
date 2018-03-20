@@ -224,6 +224,10 @@ void buildSymtab(TreeNode * syntaxTree)
   sc_push(globalScope);
   //insertIOFunc();
   traverse(syntaxTree,insertNode,afterInsertNode);
+  if (st_lookup_top("main") == -1) {
+    fprintf(listing,"Type error: missing main function\n");
+    Error = TRUE;
+  }
   sc_pop();
   if (TraceAnalyze)
   { fprintf(listing,"\nSymbol table:\n\n");
@@ -363,8 +367,10 @@ static void checkNode(TreeNode * t)
           break;
         case CallK:
           { char *callingFuncName = t->attr.name;
-            const TreeNode * funcDecl =
-                st_bucket(callingFuncName)->treeNode;
+		    BucketList bucket = st_bucket_kind(callingFuncName, FuncK);
+			if (bucket == NULL)
+              break;
+            const TreeNode * funcDecl = bucket->treeNode;
             TreeNode *arg;
             TreeNode *param;
 

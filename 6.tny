@@ -39,7 +39,7 @@ void mainDiferente(void) /* erro semantico - sem main */
    while (x <= 10)
    {
       u = u + 1;  
-      v[i] = u;
+      v[x] = u;
       x = x + 1; 
    }
 

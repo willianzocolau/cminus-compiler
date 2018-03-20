@@ -85,6 +85,20 @@ BucketList st_bucket( char * name )
   return NULL;
 }
 
+BucketList st_bucket_kind( char * name , DeclKind declKind )
+{ int h = hash(name);
+  Scope sc = sc_top();
+  while(sc) {
+    BucketList l = sc->hashTable[h];
+    while ((l != NULL) && (strcmp(name,l->name) != 0))
+      l = l->next;
+    if ((l != NULL) && (l->treeNode->kind.decl != declKind)) l = NULL;
+    if (l != NULL) return l;
+    sc = sc->parent;
+  }
+  return NULL;
+}
+
 
 /* Procedure st_insert inserts line numbers and
  * memory locations into the symbol table
