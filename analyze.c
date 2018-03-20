@@ -296,8 +296,10 @@ static void checkNode(TreeNode * t)
             typeError(t->child[0],"while test has void value");
           break;
         case RetK:
-          { const TreeNode * funcDecl =
-                st_bucket(funcName)->treeNode;
+          { BucketList bucket = st_bucket(funcName);
+		    if (bucket == NULL)
+			  break;
+		    const TreeNode * funcDecl = bucket->treeNode;
             const ExpType funcType = funcDecl->type;
             const TreeNode * expr = t->child[0];
 
