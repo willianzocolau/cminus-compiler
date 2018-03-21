@@ -49,6 +49,21 @@ static void symbolError(TreeNode * t, char * message)
   Error = TRUE;
 }
 
+char* format_str (char *a, char *b)
+{
+   if ( b != NULL )
+   {
+      char *c = malloc(strlen(a) + strlen(b) + 1);
+      if ( c != NULL )
+      {
+         strcpy(c, a);
+         strcat(c, b);
+         return c;
+      }
+   }
+   return NULL;
+}
+
 /* Procedure insertNode inserts
  * identifiers stored in t into
  * the symbol table
@@ -75,7 +90,7 @@ static void insertNode( TreeNode * t)
       { case IdK:
           if (st_lookup_kind(t->attr.name, VarK) == -1)
           /* not yet in table, error */
-            symbolError(t, "undeclared variable");
+            symbolError(t, format_str("undeclared variable: ", t->attr.name));
           else
           /* already in table, so ignore location,
              add line number of use only */
@@ -84,7 +99,7 @@ static void insertNode( TreeNode * t)
         case ArrIdK:
           if (st_lookup_kind(t->attr.name, ArrVarK) == -1)
           /* not yet in table, error */
-            symbolError(t, "undeclared array");
+            symbolError(t, format_str("undeclared array: ", t->attr.name));
           else
           /* already in table, so ignore location,
              add line number of use only */
@@ -93,7 +108,7 @@ static void insertNode( TreeNode * t)
         case CallK:
           if (st_lookup_kind(t->attr.name, FuncK) == -1)
           /* not yet in table, error */
-            symbolError(t, "undeclared function");
+            symbolError(t, format_str("undeclared function: ", t->attr.name));
           else
           /* already in table, so ignore location,
              add line number of use only */
@@ -109,7 +124,7 @@ static void insertNode( TreeNode * t)
           funcName = t->attr.name;
           if (st_lookup_top(funcName) >= 0) {
           /* already in table, so it's an error */
-            symbolError(t,"function already declared");
+            symbolError(t, format_str("function already declared: ", t->attr.name));
             break;
           }
           st_insert(funcName,t->lineno,addLocation(),t);
@@ -130,7 +145,7 @@ static void insertNode( TreeNode * t)
           { char *name;
 
             if (t->child[0]->attr.type == VOID) {
-              symbolError(t,"variable should have non-void type");
+              symbolError(t, format_str("variable should have non-void type: ", t->attr.arr.name));
               break;
             }
 
@@ -145,7 +160,7 @@ static void insertNode( TreeNode * t)
             if (st_lookup_top(name) < 0 && st_global_lookup_top(name) < 0)
               st_insert(name,t->lineno,addLocation(),t);
             else
-              symbolError(t,"symbol already declared for current scope");
+              symbolError(t, format_str("symbol already declared for current scope: ", name));
           }
           break;
         default:
@@ -154,14 +169,14 @@ static void insertNode( TreeNode * t)
       break;
     case ParamK:
       if (t->child[0]->attr.type == VOID)
-        symbolError(t->child[0],"void type parameter is not allowed");
+        symbolError(t->child[0], format_str("void type parameter is not allowed: ", t->attr.name));
       if (st_lookup(t->attr.name) == -1) {
         st_insert(t->attr.name,t->lineno,addLocation(),t);
         if (t->kind.param == NonArrParamK)
           t->type = Integer;
       }
       else
-        symbolError(t,"symbol already declared for current scope");
+        symbolError(t, format_str("symbol already declared for current scope: ", t->attr.name));
       break;
     default:
       break;
@@ -276,7 +291,7 @@ static void checkNode(TreeNode * t)
             typeError(t->child[0],"assignment to array variable");
           else if (t->child[1]->type == Void)
           /* r-value cannot have void type */
-            typeError(t->child[0],"assignment of void value");
+            typeError(t->child[0], "assignment of void value");
           else
             t->type = t->child[0]->type;
           break;
