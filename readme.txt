@@ -1,11 +1,11 @@
-flex tiny.l 
-bison -d tiny.y
+flex cminus.l
+bison -d cminus.y
 gcc -c *.c
-gcc -o tiny *.o -ly -lfl
+gcc -o cminus *.o -ly -lfl
 
-flex tiny.l && bison -d tiny.y && gcc -c *.c && gcc -o tiny *.o -ly -lfl
+flex cminus.l && bison -d cminus.y && gcc -c *.c && gcc -o cminus *.o -ly -lfl
 
-./tiny -l -y -a -f 2.tny
+./cminus -l -y -a -f 2.tny
 
 -l -> analisador léxico
 -y -> analisador sintático
