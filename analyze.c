@@ -240,7 +240,7 @@ void buildSymtab(TreeNode * syntaxTree)
   sc_push(globalScope);
   //insertIOFunc();
   traverse(syntaxTree,insertNode,afterInsertNode);
-  if (st_lookup_top("main") == -1) {
+  if (st_lookup_top_kind("main", FuncK) == -1) {
     fprintf(listing,"Type error: missing main function\n");
     Error = TRUE;
   }
@@ -419,12 +419,12 @@ static void checkNode(TreeNode * t)
               /* any problem */
               break;
             }
-
+            
             if (arg == NULL && param != NULL)
             /* the number of arguments does not match to
                that of parameters */
-              typeError(t->child[0],"the number of parameters is wrong");
-
+              typeError(t,"the number of parameters is wrong");
+            
             t->type = funcDecl->type;
           }
           break;

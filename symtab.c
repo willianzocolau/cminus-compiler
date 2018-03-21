@@ -154,6 +154,20 @@ int st_lookup_top (char * name)
   return -1;
 }
 
+int st_lookup_top_kind ( char * name, DeclKind declKind )
+{ int h = hash(name);
+  Scope sc = sc_top();
+  while(sc) {
+    BucketList l = sc->hashTable[h];
+    while ((l != NULL) && (strcmp(name,l->name) != 0))
+      l = l->next;
+    if ((l != NULL) && (l->treeNode->kind.decl != declKind)) l = NULL;
+    if (l != NULL) return l->memloc;
+    break;
+  }
+  return -1;
+}
+
 void st_add_lineno(char * name, int lineno)
 { BucketList l = st_bucket(name);
   LineList ll = l->lines;
