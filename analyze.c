@@ -35,54 +35,6 @@ static void traverse( TreeNode * t,
   }
 }
 
-static void insertIOFunc(void)
-{ TreeNode *func;
-  TreeNode *typeSpec;
-  TreeNode *param;
-  TreeNode *compStmt;
-
-  func = newDeclNode(FuncK);
-
-  typeSpec = newTypeNode(FuncK);
-  typeSpec->attr.type = INT;
-  func->type = Integer;
-
-  compStmt = newStmtNode(CompK);
-  compStmt->child[0] = NULL;      // no local var
-  compStmt->child[1] = NULL;      // no stmt
-
-  func->lineno = 0;
-  func->attr.name = "input";
-  func->child[0] = typeSpec;
-  func->child[1] = NULL;          // no param
-  func->child[2] = compStmt;
-
-  st_insert("input", -1, addLocation(), func);
-
-  func = newDeclNode(FuncK);
-
-  typeSpec = newTypeNode(FuncK);
-  typeSpec->attr.type = VOID;
-  func->type = Void;
-
-  param = newParamNode(NonArrParamK);
-  param->attr.name = "arg";
-  param->child[0] = newTypeNode(FuncK);
-  param->child[0]->attr.type = INT;
-
-  compStmt = newStmtNode(CompK);
-  compStmt->child[0] = NULL;      // no local var
-  compStmt->child[1] = NULL;      // no stmt
-
-  func->lineno = 0;
-  func->attr.name = "output";
-  func->child[0] = typeSpec;
-  func->child[1] = param;
-  func->child[2] = compStmt;
-
-  st_insert("output", -1, addLocation(), func);
-}
-
 /* nullProc is a do-nothing procedure to
  * generate preorder-only or postorder-only
  * traversals from traverse
@@ -190,7 +142,7 @@ static void insertNode( TreeNode * t)
               t->type = IntegerArray;
             }
 
-            if (st_lookup_top(name) < 0)
+            if (st_lookup_top(name) < 0 && st_global_lookup_top(name) < 0)
               st_insert(name,t->lineno,addLocation(),t);
             else
               symbolError(t,"symbol already declared for current scope");
@@ -207,9 +159,9 @@ static void insertNode( TreeNode * t)
         st_insert(t->attr.name,t->lineno,addLocation(),t);
         if (t->kind.param == NonArrParamK)
           t->type = Integer;
-        else
-        symbolError(t,"symbol already declared for current scope");
       }
+      else
+        symbolError(t,"symbol already declared for current scope");
       break;
     default:
       break;
@@ -238,7 +190,6 @@ static void afterInsertNode( TreeNode * t )
 void buildSymtab(TreeNode * syntaxTree)
 { globalScope = sc_create(NULL);
   sc_push(globalScope);
-  //insertIOFunc();
   traverse(syntaxTree,insertNode,afterInsertNode);
   if (st_lookup_top("main") == -1) {
     fprintf(listing,"Type error: missing main function\n");

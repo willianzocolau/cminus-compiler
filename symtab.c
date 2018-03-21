@@ -38,6 +38,10 @@ static Scope scopeStack[MAX_SCOPE];
 static int nScopeStack = 0;
 static int location[MAX_SCOPE];
 
+Scope sc_top_global( void )
+{ return scopeStack[0];
+}
+
 Scope sc_top( void )
 { return scopeStack[nScopeStack - 1];
 }
@@ -99,7 +103,6 @@ BucketList st_bucket_kind( char * name, DeclKind declKind )
   return NULL;
 }
 
-
 /* Procedure st_insert inserts line numbers and
  * memory locations into the symbol table
  * loc = memory location is inserted only the
@@ -144,6 +147,19 @@ int st_lookup_kind ( char * name, DeclKind declKind )
 int st_lookup_top (char * name)
 { int h = hash(name);
   Scope sc = sc_top();
+  while(sc) {
+    BucketList l = sc->hashTable[h];
+    while ((l != NULL) && (strcmp(name,l->name) != 0))
+      l = l->next;
+    if (l != NULL) return l->memloc;
+    break;
+  }
+  return -1;
+}
+
+int st_global_lookup_top (char * name)
+{ int h = hash(name);
+  Scope sc = sc_top_global();
   while(sc) {
     BucketList l = sc->hashTable[h];
     while ((l != NULL) && (strcmp(name,l->name) != 0))
@@ -254,10 +270,7 @@ void printSymTab(FILE * listing)
       fprintf(listing, "function name: %s ", scope->funcName);
     }
 
-    fprintf(
-        listing,
-        "(nested level: %d)\n",
-        scope->nestedLevel);
+    fprintf(listing,"(nested level: %d)\n", scope->nestedLevel);
 
     fprintf(listing,"Symbol Name    Sym.Type  Data Type    Line Numbers\n");
     fprintf(listing,"-------------  --------  -----------  ------------\n");

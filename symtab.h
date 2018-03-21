@@ -63,9 +63,11 @@ void st_add_lineno(char * name, int lineno);
 BucketList st_bucket( char * name );
 BucketList st_bucket_kind( char * name, DeclKind declKind );
 int st_lookup_top (char * name);
+int st_global_lookup_top (char * name);
 
 Scope sc_create(char *funcName);
 Scope sc_top( void );
+Scope sc_global_top( void );
 void sc_pop( void );
 void sc_push( Scope scope );
 int addLocation( void );
