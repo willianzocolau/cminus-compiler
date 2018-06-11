@@ -10,7 +10,7 @@
 #define NO_ANALYSE FALSE
 
 /* Set NO_CODE to get a compiler that does not generate code */
-#define NO_CODE TRUE
+#define NO_CODE FALSE
 
 #if NO_PARSE
 #define BUILDTYPE "SCANNER ONLY"
@@ -152,23 +152,24 @@ int main(int argc, char **argv)
     }
 
 #if !NO_CODE
-    if (!Error)
-    {
-  codeGen(syntaxTree, "output.dcl", "output");
-
-  /* did code generation succeed? */
-  if (!Error)
-  {
-      fprintf(listing,"*** Output written to \"output.dcl\"\n");
-
-      /* tracing? remind user */
-      if (TraceCode)
-    fprintf(listing,
-      "*** CODE TRACING OPTION ENABLED; see output\n");
-  }
+  if (! Error)
+  { char * codefile;
+    int fnlen = strcspn(sourceFileName,".");
+    codefile = (char *) calloc(fnlen+4, sizeof(char));
+    strncpy(codefile,sourceFileName,fnlen);
+    strcat(codefile,".asm");
+    code = fopen(codefile,"w");
+    if (code == NULL)
+    { printf("Unable to open %s\n",codefile);
+      exit(1);
     }
-    
-#endif    
+    codeGen(syntaxTree,codefile);
+    fprintf(listing,"*** Output written to \"%s\"\n", codefile);
+    if (TraceCode)
+        fprintf(listing,"*** CODE TRACING OPTION ENABLED; see output\n");
+    fclose(code);
+  }
+#endif 
 #endif
 #endif
     
